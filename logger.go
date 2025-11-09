@@ -1,4 +1,4 @@
-package logger
+package crystal
 
 import (
     "encoding/json"
