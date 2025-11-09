@@ -1,7 +1,7 @@
 # This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+# Untuk informasi lebih lanjut: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Go
+name: Go Build & Test (Custom Cache)
 
 on:
   push:
@@ -16,13 +16,35 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Langkah 1: Setup Go (Nonaktifkan caching bawaan setup-go)
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
+        cache: false # Menonaktifkan caching bawaan yang mencari go.sum
 
+    # Langkah 2: Custom Cache Go Modules (Menggunakan go.mod sebagai key)
+    # Ini adalah langkah yang akan menggantikan fungsionalitas caching bawaan.
+    - name: Cache Go Modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+          .cache
+        # Gunakan hash dari go.mod sebagai kunci cache.
+        # Ini akan memastikan cache diperbarui hanya jika go.mod berubah.
+        key: ${{ runner.os }}-go-${{ hashFiles('go.mod') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    # Langkah 3: Ambil semua dependensi (akan menggunakan cache jika ada)
+    - name: Download Go modules
+      run: go mod download
+
+    # Langkah 4: Build Proyek
     - name: Build
       run: go build -v ./...
 
+    # Langkah 5: Jalankan Test
     - name: Test
       run: go test -v ./...
