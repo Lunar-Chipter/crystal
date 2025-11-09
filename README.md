@@ -3,7 +3,7 @@
 # 🪵 Crystal Logger
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go Reference](https://pkg.go.dev/badge/github.com/Lunar-Chipter/logger.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/Crystal)
+[![Go Reference](https://pkg.go.dev/badge/github.com/Lunar-Chipter/Crystal.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/Crystal)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Lunar-Chipter/Crystal)](https://goreportcard.com/report/github.com/Lunar-Chipter/Crystal)
 
 A powerful, highly configurable, and feature-rich logging library for Go applications. Designed for modern development, it supports structured logging, multiple output formats, context-aware tracing, performance optimization, and much more.
