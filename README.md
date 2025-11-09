@@ -6,7 +6,6 @@
 [![GoDoc](https://godoc.org/github.com/Lunar-Chipter/Crystal?status.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/Crystal)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Lunar-Chipter/Crystal/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Lunar-Chipter/Crystal.svg?style=social&label=Star)](https://github.com/Lunar-Chipter/Crystal)
-[![Go Reference](https://pkg.go.dev/badge/github.com/Lunar-Chipter/Crystal.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/Crystal)
 
 > The most versatile and powerful logging library for Go applications.
 
@@ -450,13 +449,13 @@ func main() {
 
 Crystal Logger is designed with performance in mind. Here's how it compares to other popular Go logging libraries:
 
-| Library | Time per Operation (ns) | Allocations per Operation | Memory per Operation (bytes) |
+| Library | Time per Operation | Allocations per Operation | Memory per Operation |
 |---------|-------------------------|--------------------------|------------------------------|
-| Crystal Logger | **1250** | **2** | **320** |
-| Zap | 1350 | 2 | 336 |
-| Logrus | 2450 | 7 | 864 |
-| Zerolog | 1150 | 1 | 288 |
-| Standard Library | 3100 | 5 | 720 |
+| Crystal | **1250 ns** | **2** | **320 bytes** |
+| Zap | 1350ns | 2 | 336 bytes |
+| Logrus | 2450ns | 7 | 864 bytes |
+| Zerolog | 1150ns | 1 | 288 bytes |
+| Standard Library | 3100ns | 5 | 720 bytes|
 
 *Benchmark results based on a typical logging operation with 10 fields, measured on Go 1.21 with an Intel i7-9700K processor.*
 
