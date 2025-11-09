@@ -106,9 +106,9 @@ Running the code above will produce a beautiful, colored output in your console:
 
 ```
 [2023-10-27 15:04:05.000] [ INFO ] Application has started
-[2023-10-27 15:04:05.001] [ DEBUG] Fetching data from user service
+[2023-10-27 15:04:05.001] [ DEBUG ] Fetching data from user service
 [2023-10-27 15:04:05.002] [ WARN ] Deprecated API endpoint used
-[2023-10-27 15:04:05.003] [ ERROR] Failed to connect to the database
+[2023-10-27 15:04:05.003] [ ERROR ] Failed to connect to the database
 [2023-10-27 15:04:05.004] [ INFO ] User logged in successfully {user_id=123 status=active}
 ```
 
