@@ -453,9 +453,9 @@ Crystal Logger is designed with performance in mind. Here's how it compares to o
 |---------|-------------------------|--------------------------|------------------------------|
 | Crystal | **1250 ns** | **2** | **320 bytes** |
 | Zap | 1350ns | 2 | 336 bytes |
-| Logrus | 2450ns | 7 | 864 bytes |
-| Zerolog | 1150ns | 1 | 288 bytes |
-| Standard Library | 3100ns | 5 | 720 bytes|
+| Logrus | 2450 ns | 7 | 864 bytes |
+| Zerolog | 1150 ns | 1 | 288 bytes |
+| Standard Library | 3100 ns | 5 | 720 bytes|
 
 *Benchmark results based on a typical logging operation with 10 fields, measured on Go 1.21 with an Intel i7-9700K processor.*
 
