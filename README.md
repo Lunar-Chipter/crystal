@@ -2,11 +2,11 @@
 
 # 🪵 Crystal Logger
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/Lunar-Chipter/crystal)](https://goreportcard.com/report/github.com/Lunar-Chipter/crystal)
-[![GoDoc](https://godoc.org/github.com/Lunar-Chipter/crystal?status.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/crystal)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Lunar-Chipter/Crystal)](https://goreportcard.com/report/github.com/Lunar-Chipter/Crystal)
+[![GoDoc](https://godoc.org/github.com/Lunar-Chipter/Crystal?status.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/Crystal)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Lunar-Chipter/Crystal/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Lunar-Chipter/Crystal.svg?style=social&label=Star)](https://github.com/Lunar-Chipter/Crystal)
-[![Go Reference](https://pkg.go.dev/badge/github.com/Lunar-Chipter/crystal.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/crystal)
+[![Go Reference](https://pkg.go.dev/badge/github.com/Lunar-Chipter/Crystal.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/Crystal)
 
 > The most versatile and powerful logging library for Go applications.
 
