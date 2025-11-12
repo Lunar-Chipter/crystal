@@ -21,6 +21,7 @@ Crystal Logger is more than just a logger; it's a comprehensive observability to
 - [📖 Usage](#-usage)
   - [Basic Configuration](#basic-configuration)
   - [JSON Logging for Production](#json-logging-for-production)
+  - [CSV Logging for Analysis](#csv-logging-for-analysis)
   - [Context-Aware Logging](#context-aware-logging)
   - [Performance & Reliability](#performance--reliability)
   - [Advanced Use Cases](#advanced-use-cases)
@@ -33,6 +34,7 @@ Crystal Logger is more than just a logger; it's a comprehensive observability to
   - [LoggerConfig](#loggerconfig)
   - [TextFormatter Options](#textformatter-options)
   - [JSONFormatter Options](#jsonformatter-options)
+  - [CSVFormatter Options](#csvformatter-options)
 - [🔗 API Reference](#-api-reference)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
@@ -46,12 +48,13 @@ Crystal Logger is more than just a logger; it's a comprehensive observability to
 - **🎨 Flexible Formatters**:
   - **Text Formatter**: Highly customizable colored console output with field ordering, sensitive data masking, and more.
   - **JSON Formatter**: Perfect for structured logging in modern observability stacks (ELK, Splunk, Datadog).
-  - **CSV Formatter**: For tabular log analysis.
+  - **CSV Formatter**: For tabular log analysis with customizable field order.
 - **🧠 Context-Aware Logging**: Automatically extracts and logs `trace_id`, `span_id`, `user_id`, etc., from a `context.Context`.
 - **⚡ Performance & Reliability**:
   - **Asynchronous Logging**: Built-in buffered writer for high-throughput applications.
   - **Log Rotation**: Automatic file rotation based on size, time, or age, with compression and cleanup.
   - **Log Sampling**: Reduce log volume in high-traffic scenarios.
+  - **Object Pooling**: Reuses LogEntry objects and buffers to reduce memory allocation.
 - **🔍 Observability**:
   - **Automatic Caller Information**: Logs the file, line, function, and package.
   - **Goroutine ID & PID**: Easily identify the source of logs.
@@ -61,6 +64,8 @@ Crystal Logger is more than just a logger; it's a comprehensive observability to
   - **Hooks**: Execute custom functions on every log entry.
   - **Audit Logging**: Dedicated helper for security and compliance logging.
   - **Sensitive Data Masking**: Automatically mask sensitive fields like passwords or tokens.
+  - **Field Transformers**: Apply custom transformations to field values.
+  - **Custom Field Ordering**: Define the order of fields in output.
 
 ---
 
@@ -147,6 +152,12 @@ func main() {
         EnableStackTrace:  true,
         MaskSensitiveData: true,
         SensitiveFields:   []string{"password", "token"},
+        CustomFieldOrder:  []string{"user_id", "status", "action"},
+        FieldTransformers: map[string]func(interface{}) string{
+            "timestamp": func(v interface{}) string {
+                return v.(time.Time).Format("2006-01-02")
+            },
+        },
     }
 
     log := logger.NewLogger(config)
@@ -182,6 +193,11 @@ func main() {
             "level":   "log_level",
             "message": "msg",
         },
+        FieldTransformers: map[string]func(interface{}) interface{}{
+            "timestamp": func(v interface{}) interface{} {
+                return v.(time.Time).Unix()
+            },
+        },
     }
 
     log := logger.NewLogger(config)
@@ -196,6 +212,37 @@ func main() {
 
 ```json
 {"timestamp":"2023-10-27T15:04:05.000Z","log_level":"INFO","msg":"Server started","Fields":{"port":8080,"env":"production"},"pid":12345}
+```
+
+### CSV Logging for Analysis
+
+Use the CSV formatter for tabular log analysis.
+
+```go
+package main
+
+import (
+    "os"
+    "github.com/Lunar-Chipter/crystal"
+)
+
+func main() {
+    config := logger.LoggerConfig{
+        Level:  logger.INFO,
+        Output: os.Stdout,
+    }
+    config.Formatter = &logger.CSVFormatter{
+        IncludeHeader:   true,
+        FieldOrder:      []string{"timestamp", "level", "message", "pid", "user_id"},
+        TimestampFormat: "2006-01-02 15:04:05",
+    }
+
+    log := logger.NewLogger(config)
+    log.Info("User action", map[string]interface{}{
+        "user_id": 12345,
+        "action":  "login",
+    })
+}
 ```
 
 ### Context-Aware Logging
@@ -258,6 +305,37 @@ config := logger.LoggerConfig{
 log := logger.NewLogger(config)
 ```
 
+#### Async Logger
+For maximum performance in high-throughput applications.
+
+```go
+// Create a base logger
+baseLog := logger.NewDefaultLogger()
+
+// Wrap it with async logging
+asyncLog := logger.NewAsyncLogger(baseLog, 4, 10000) // 4 workers, 10000 buffer size
+
+// Use it like a regular logger
+asyncLog.Info("This is logged asynchronously")
+
+// Close when done
+defer asyncLog.Close()
+```
+
+#### Sampling Logger
+Reduce log volume in production with sampling.
+
+```go
+// Create a base logger
+baseLog := logger.NewDefaultLogger()
+
+// Wrap it with sampling (1 in 100 logs will be recorded)
+samplingLog := logger.NewSamplingLogger(baseLog, 100)
+
+// Use it like a regular logger
+samplingLog.Debug("This might not be logged due to sampling")
+```
+
 ### Advanced Use Cases
 
 #### Performance Monitoring
@@ -286,6 +364,31 @@ log.Audit(
     true,              // Success
     map[string]interface{}{"ip": "192.168.1.1"}, // Details
 )
+```
+
+#### Metrics Collection
+Collect metrics alongside your logs.
+
+```go
+// Create a metrics collector
+metricsCollector := logger.NewDefaultMetricsCollector()
+
+// Configure logger with metrics
+config := logger.LoggerConfig{
+    Level:           logger.INFO,
+    Output:          os.Stdout,
+    EnableMetrics:   true,
+    MetricsCollector: metricsCollector,
+}
+
+log := logger.NewLogger(config)
+
+// Log as usual - metrics are automatically collected
+log.Info("User logged in", map[string]interface{}{"user_id": 12345})
+
+// Get metrics
+counter := metricsCollector.GetCounter("log.info")
+min, max, avg, p95 := metricsCollector.GetHistogram("database_query_duration")
 ```
 
 ---
@@ -494,6 +597,8 @@ BenchmarkStandardLibrary-8       3225000               3100 ns/op               
 
 3. **Prefer Structured Logging**: Use field-based logging for better performance and searchability
 
+4. **Object Pooling**: Crystal Logger automatically uses object pooling for LogEntry and buffers to reduce memory allocation
+
 ---
 
 ## ⚙️ Configuration
@@ -520,6 +625,16 @@ The main configuration struct for the logger.
 | `BufferSize` | `int` | `1000` | Buffer size for the buffered writer. |
 | `FlushInterval` | `time.Duration` | `5s` | Flush interval for the buffered writer. |
 | `Hostname`, `Application`, `Version`, `Environment` | `string` | `""` | Static fields to add to every log entry. |
+| `DisableLocking` | `bool` | `false` | Disable locks for single-threaded scenarios. |
+| `PreAllocateFields` | `int` | `0` | Pre-allocate field count. |
+| `PreAllocateTags` | `int` | `0` | Pre-allocate tag count. |
+| `MaxMessageSize` | `int` | `0` | Maximum message size to avoid large messages affecting performance. |
+| `AsyncLogging` | `bool` | `false` | Enable asynchronous logging. |
+| `EnableMetrics` | `bool` | `false` | Enable metrics collection. |
+| `MetricsCollector` | `MetricsCollector` | `nil` | Metrics collector. |
+| `ErrorHandler` | `func(error)` | `nil` | Error handler function. |
+| `OnFatal` | `func(*LogEntry)` | `nil` | Callback for fatal logs. |
+| `OnPanic` | `func(*LogEntry)` | `nil` | Callback for panic logs. |
 
 ### `TextFormatter` Options
 
@@ -532,6 +647,10 @@ The main configuration struct for the logger.
 | `MaskSensitiveData` | `bool` | `false` | Enable masking of sensitive fields. |
 | `SensitiveFields` | `[]string` | `[]` | List of field names to mask. |
 | `MaskString` | `string` | `"******"` | The string to use for masking. |
+| `CustomFieldOrder` | `[]string` | `[]` | Custom order for fields. |
+| `FieldTransformers` | `map[string]func(interface{}) string` | `nil` | Functions to transform field values. |
+| `MaxFieldWidth` | `int` | `0` | Maximum width for field values. |
+| `EnableColorsByLevel` | `bool` | `true` | Enable colors based on log level. |
 
 ### `JSONFormatter` Options
 
@@ -542,6 +661,15 @@ The main configuration struct for the logger.
 | `FieldKeyMap` | `map[string]string` | `nil` | A map to rename JSON keys (e.g., `level` -> `log_level`). |
 | `MaskSensitiveData` | `bool` | `false` | Enable masking of sensitive fields. |
 | `SensitiveFields` | `[]string` | `[]` | List of field names to mask. |
+| `FieldTransformers` | `map[string]func(interface{}) interface{}` | `nil` | Functions to transform field values. |
+
+### `CSVFormatter` Options
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `IncludeHeader` | `bool` | `false` | Include header row in output. |
+| `FieldOrder` | `[]string` | `[]` | Order of fields in CSV. |
+| `TimestampFormat` | `string` | `DEFAULT_TIMESTAMP_FORMAT` | Custom timestamp format. |
 
 ---
 
@@ -560,6 +688,19 @@ Key types and functions include:
 * `type LogEntry struct`
 * `type Level int`
 * `func WithTraceID(ctx context.Context, traceID string) context.Context`
+* `func WithSpanID(ctx context.Context, spanID string) context.Context`
+* `func WithUserID(ctx context.Context, userID string) context.Context`
+* `func WithSessionID(ctx context.Context, sessionID string) context.Context`
+* `func WithRequestID(ctx context.Context, requestID string) context.Context`
+* `func ExtractFromContext(ctx context.Context) map[string]string`
+* `type AsyncLogger struct`
+* `func NewAsyncLogger(logger *Logger, workerCount int, bufferSize int) *AsyncLogger`
+* `type SamplingLogger struct`
+* `func NewSamplingLogger(logger *Logger, rate int) *SamplingLogger`
+* `type BufferedWriter struct`
+* `func NewBufferedWriter(writer io.Writer, bufferSize int, flushInterval time.Duration) *BufferedWriter`
+* `type MetricsCollector interface`
+* `func NewDefaultMetricsCollector() *DefaultMetricsCollector`
 
 ---
 
