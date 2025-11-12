@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/Lunar-Chipter/crystal)](https://goreportcard.com/report/github.com/Lunar-Chipter/crystal)
 [![GoDoc](https://godoc.org/github.com/Lunar-Chipter/crystal?status.svg)](https://pkg.go.dev/github.com/Lunar-Chipter/crystal)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Lunar-Chipter/crystal/blob/main/LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/Lunar-Chipter/Crystal.svg?style=social&label=Star)](https://github.com/Lunar-Chipter/crystal)
+[![GitHub stars](https://img.shields.io/github/stars/Lunar-Chipter/crystal.svg?style=social&label=Star)](https://github.com/Lunar-Chipter/crystal)
 
 > The most versatile and powerful logging library for Go applications.
 
