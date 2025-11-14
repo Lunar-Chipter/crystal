@@ -1,7 +1,5 @@
-module github.com/Lunar-Chipter/Crystal
+module crystal
 
-go 1.21
+go 1.25.4
 
-require (
-    
-)
+require github.com/google/uuid v1.6.0
